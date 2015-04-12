@@ -1,0 +1,41 @@
+[
+    {
+        "name": "Kapitola1",
+        "add": [
+            "WEB-INF",
+            "Index.jsp",
+	
+        ]
+    },
+    {
+        "name": "Kapitola2",
+        "add": [
+            "CLASSES/Servlet.java",
+            "RESOURCES"
+        ]
+    },
+    {
+        "name": "Kapitola3",
+        "add": [
+            "CLASSES/Main.java"
+        ],
+        "exclude": [
+            "CLASSES/Servlet.java"
+        ]
+    },
+    {
+        "name": "Kapitola3-clean",
+        "add": [
+            "WEB-INF/web2.xml",
+            "CLASSES/Main2.java",
+            "Index2.jsp"
+        ],
+        "history": "false"
+    },
+    {
+        "name": "Kapitola4",
+        "add": [
+            "CLASSES/Manager.java"
+        ]
+    },
+]
