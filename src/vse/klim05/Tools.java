@@ -2,9 +2,12 @@ package vse.klim05;
 
 public class Tools {
 	
+	public static Boolean debug = false;
+	
 	public static void log(String message){
 		
-		System.out.println("DEBUG: " + message);
+		if(debug)
+			System.out.println("DEBUG: " + message);
 	
 	}
 

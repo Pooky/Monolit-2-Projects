@@ -54,13 +54,8 @@ public class MonolitManager {
 		}
 		
 		chManager = new ChapterManager(a);
-		
-		//File file = new File("/home/worker/Dokumente/VSE/Arch_Navrh/Test/Index.jsp");
-		
 		this.processor = new TxtFileProcessor(chManager);
-		//processor.setChapter(chManager.getChapter("Kapitola1"));
 		
-		//processor.processFile(file);		
 		
 		Tools.log("chapters loaded");
 
@@ -74,6 +69,12 @@ public class MonolitManager {
 	public void CreateChapter(String name){
 		
 		Chapter chapter = chManager.getChapter(name);
+		
+		if(chapter == null){
+			Main.error("Chapter not exists!");
+			return;
+		}
+		
 		// set chapter to processor
 		this.processor.setChapter(chapter);
 		
