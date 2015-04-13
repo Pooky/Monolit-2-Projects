@@ -1,8 +1,6 @@
 package vse.klim05;
 
 import java.io.File;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -16,7 +14,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		
-		Tools.debug = true;
+		//Tools.debug = true;
 		
 		//MonolitManager manager = new MonolitManager(
 		//		"/home/worker/Dokumente/VSE/Arch_Navrh/Test",
@@ -34,8 +32,8 @@ public class Main {
 		parser.accepts("m").withRequiredArg(); // -m path to monolit
 		parser.accepts("o").withRequiredArg(); // -o output folder
 		parser.accepts("ch").withRequiredArg(); // -ch chapter which should be generated
-		parser.accepts("d"); // allow debug
-		Tools.log(Arrays.asList(args).toString());
+		parser.accepts("d").withRequiredArg(); // allow debug
+		
 		
 		OptionSet options = parser.parse(args);
 		

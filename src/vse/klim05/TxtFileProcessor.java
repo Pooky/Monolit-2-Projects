@@ -27,7 +27,7 @@ public class TxtFileProcessor {
 	public TxtFileProcessor(ChapterManager chManager){
 		
 		this.chManager = chManager;
-		this.resultFile = new ArrayList();
+		this.resultFile = new ArrayList<String>();
 	
 	}
 	
@@ -41,6 +41,8 @@ public class TxtFileProcessor {
 			e.printStackTrace();
 		}	
 		
+		resultFile.clear();
+		
 		Boolean include = true;
 		
 		Pattern pattern = Pattern.compile("(.*?);");
@@ -48,6 +50,7 @@ public class TxtFileProcessor {
 		Integer position = 1;
 		Integer UseInBegin = -1;
 		String temp = null;
+		
 		
 		// check all lines
 		while(input.hasNext()){

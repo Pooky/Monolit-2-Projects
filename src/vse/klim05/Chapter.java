@@ -1,6 +1,7 @@
 package vse.klim05;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,8 +14,8 @@ import org.json.simple.JSONObject;
 
 public class Chapter {
 
-	private ArrayList<String> addedFiles;
-	private ArrayList<String> excludedFiles;
+	private List<String> addedFiles;
+	private List<String> excludedFiles;
 	private Boolean  useHistory;
 	private Chapter nextChapter;
 	private Chapter	prevChapter;
@@ -58,8 +59,8 @@ public class Chapter {
 	public Chapter(JSONObject chapter){
 		
 		
-		this.addedFiles = new ArrayList();
-		this.excludedFiles = new ArrayList();
+		this.addedFiles = new ArrayList<String>();
+		this.excludedFiles = new ArrayList<String>();
 		this.prevChapter = null;
 		this.nextChapter = null;
 		this.useHistory = true;
@@ -101,8 +102,7 @@ public class Chapter {
 	 */
 	public ArrayList<String> getFiles(){
 		
-		ArrayList<String> output = new ArrayList();
-		Boolean terminate = false;
+		ArrayList<String> output = new ArrayList<String>();
 		
 		// use history and get all files from another chapters
 		if(useHistory){
