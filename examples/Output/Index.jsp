@@ -16,14 +16,17 @@ namespace Ukol6
     {
 
         private MainWindow window;
+        private String customerId { set; get; } 
 
         /**
          * Construct model with gui and customerID
          * @param MainWindow window 
+         * @param String customerID 
          **/
 
-        public Model(MainWindow window)
+
+        public Model(MainWindow window, String customerID)
         {
             this.window = window;
+            this.customerId = customerID;
         }
-
