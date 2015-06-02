@@ -1,4 +1,4 @@
-package vse.klim05;
+package cz.vse._422.klim05.Klima;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,6 +33,8 @@ public class TxtFileProcessor {
 	
 	public void processFile(File file){
 		
+		//return;
+		
 		Scanner input = null;
 		try {
 			input = new Scanner(file);
@@ -59,7 +61,7 @@ public class TxtFileProcessor {
 			// get next line
 		    String line = input.nextLine();
 		    
-		    Tools.log("Analyzing: " + line);
+		    Tools.log("Analyzing: " + line, 2);
 		    
 		    UseInBegin = line.indexOf(blockBegin);
 		    
@@ -72,7 +74,7 @@ public class TxtFileProcessor {
 		    	include = false;
 		    	
 		    	temp = line.substring(UseInBegin + blockBegin.length());
-		    	Tools.log("FOUND BLOCK");
+		    	Tools.log("FOUND BLOCK", 2);
 		    	
 		    	matcher = pattern.matcher(temp);
 		    	while(matcher.find()){
@@ -111,7 +113,7 @@ public class TxtFileProcessor {
 		    	
 		    }
 		    
-		    Tools.log("INCLUDE:" + include.toString());
+		    Tools.log("INCLUDE:" + include.toString(), 2);
 		}
 
 		input.close();
@@ -146,7 +148,7 @@ public class TxtFileProcessor {
 		Boolean result = false;
 		
 		expression = expression.replaceAll("\\s+", "").replaceAll(";$", "");
-		Tools.log("\t evaluating: " + expression);
+		Tools.log("\t evaluating: " + expression, 2);
 		
 		// check if is it interval
 		if(expression.contains(":")){
@@ -164,10 +166,13 @@ public class TxtFileProcessor {
 				}
 				
 			}else{
+
 				
 				if(position1 <= chapterPosition && chapterPosition <= chManager.getChapterPosition(interval[1])){
 					result = true;
 				}
+				
+				
 				
 			}			
 			

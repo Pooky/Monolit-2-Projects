@@ -1,10 +1,11 @@
-package vse.klim05;
+package cz.vse._422.klim05.Klima;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -18,24 +19,30 @@ public class MonolitManager {
 	private ChapterManager chManager;
 	private String monolitFolder;
 	private String destinationFolder;
+	private String actualDestinationFolder;
+	
 	private String[] extensions = {
 		"txt", "java", "jsp", "html", "xml"
 	};
 	private TxtFileProcessor processor;
 	
-
+	public MonolitManager(){
+		this("/home/worker/Projects/Java/Projects-2-Monolit/Monolit", "");
+	}	
+	
+	public MonolitManager(String destinationFolder){
+		this("/home/worker/Projects/Java/Projects-2-Monolit/Monolit", destinationFolder);
+	}
 	public MonolitManager(String monolitFolder, String destinationFolder){
 		
 		this.monolitFolder = monolitFolder;
 		this.destinationFolder = destinationFolder;
-		
-		
+
 		JSONParser parser = new JSONParser();
 		JSONArray a = null;
 		
 		String configFile = new File(this.monolitFolder, "chapters.json").toString();
 		Tools.log("Loading config file: " + configFile);
-		
 		
 		try {
 			 a = (JSONArray) parser.parse(new FileReader(configFile));
@@ -53,11 +60,25 @@ public class MonolitManager {
 		chManager = new ChapterManager(a);
 		this.processor = new TxtFileProcessor(chManager);
 		
-		
 		Tools.log("chapters loaded");
 
 		
 	}
+	
+	public void createAllChapters(){
+		for(Chapter chapter : chManager.getChapters()){
+			CreateChapter(chapter.getName());
+		}
+	}
+	
+	public List<Chapter> getAllChapters(){
+		return chManager.getChapters();
+	}
+	
+	public void setDestinationFolder(String folder){
+		this.destinationFolder = folder;
+	}
+	
 	/**
 	 * Create chapter in specific folder
 	 * 
@@ -77,12 +98,31 @@ public class MonolitManager {
 		
 		Tools.log("Chapter: " + name + " - " + chapter.getFiles().toString());
 		
+		// creating chapter folder
+		new File(destinationFolder, chapter.getName()).mkdir();
+		
+		actualDestinationFolder = destinationFolder + "/" + chapter.getName();
+		
+		String destinationFilePath;
+		Boolean useRelative;
+		
 		// for each files (folders
 		for(String filePath: chapter.getFiles()){
+				
+			useRelative = true;
+			destinationFilePath = filePath; // root folder
 			
+			// Check if file has destination path
+			if(filePath.contains("::")){
+				String[] sourceDestination = filePath.split("::");
+				filePath = sourceDestination[0];
+				destinationFilePath = sourceDestination[1];
+				useRelative = false;
+			}
+
 			// check if is it file or folder
 			File file = new File(monolitFolder, filePath);
-			//Tools.log(file.toString());
+			//Tools.log("Real file:" + file.toString());
 			
 			// check if it exits
 			if(!file.exists()){
@@ -90,18 +130,19 @@ public class MonolitManager {
 				continue;
 			}
 			
+			File newFile = new File(actualDestinationFolder, destinationFilePath);
+			//Tools.log("New file: " + newFile.toString());
 			/*
 			 * Copy file
 			 */
 			if(file.isFile()){
 				
-				File newFile = new File(destinationFolder, filePath);
-				Tools.log("generating file " + newFile.getParentFile().toString());
+				//Tools.log("generating file " + newFile.getParentFile().toString());
 				
 				// create folder directory
 				newFile.getParentFile().mkdirs();
 				// copy file
-				transportFile(file);
+				transportFile(file, newFile);
 				
 				
 			}
@@ -111,11 +152,15 @@ public class MonolitManager {
 			 */
 			if(file.isDirectory()){
 				
+				Tools.log("parsing directory: " + file.toString() );
 				
-				String relative = getRelative(file);
-				new File(destinationFolder, relative).mkdir(); // create folder
+				String relative = destinationFilePath;
+				if(useRelative){
+					relative = getRelative(newFile);
+				}
 				
-				getFiles(file.listFiles());
+				//Tools.log("get files");
+				getFiles(file.listFiles(), destinationFilePath);
 				
 				
 			}
@@ -127,23 +172,25 @@ public class MonolitManager {
 	 * Get files from folder recursive
 	 * @param files
 	 */
-	public void getFiles(File[] files) {
+	public void getFiles(File[] files, String relative) {
+		
+		new File(actualDestinationFolder, relative).mkdir(); // create folder
 		
 	    for (File file : files) {
 	        if (file.isDirectory()) {
-	            //System.out.println("Directory: " + file.getName());       	
-	        	
-	        	String relative = getRelative(file);
-	        	
+	            
 	        	Tools.log("Creating folder: " + relative);
 	        	// create new folder in destination
-	        	new File(destinationFolder, relative).mkdir();
+	        	new File(actualDestinationFolder, relative).mkdir();
 	            
-	        	getFiles(file.listFiles()); // recursive
+	        	getFiles(file.listFiles(), relative + "/" + file.getName()); // recursive
 	        } else {
 	        	
-	            //Tools.log(file.toString());
-	            transportFile(file);
+	           // Tools.log("File:" + file.toString() + ": " + relative);	 
+	            
+	            File destinationFile = new File(actualDestinationFolder, relative + "/" + file.getName());
+	            
+	            transportFile(file, destinationFile);
 	        
 	        }
 	    }
@@ -154,11 +201,9 @@ public class MonolitManager {
 	 * Transport file
 	 * @param file
 	 */
-	private void transportFile(File file){
+	private void transportFile(File file, File outputFile){
 	
-		// construct relative path
-		String relative = getRelative(file);
-		//Tools.log("Relative: " + relative);
+		//Tools.log("Transport file: " + file.toString() + " - to - " + outputFile.toString());
 		
 		String ext = FilenameUtils.getExtension(file.getName());
 		
@@ -167,7 +212,7 @@ public class MonolitManager {
 			
 			this.processor.processFile(file);
 			try {
-				this.processor.saveToFile(new File(destinationFolder, relative));
+				this.processor.saveToFile(outputFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -176,10 +221,9 @@ public class MonolitManager {
 		}else{
 			
 			// just copy it
-		
 			try {
 				// copy file
-				FileUtils.copyFile(new File(monolitFolder, relative), new File(destinationFolder, relative));
+				FileUtils.copyFile(file, outputFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -196,5 +240,6 @@ public class MonolitManager {
 	private String getRelative(File file){
 		return new File(monolitFolder).toURI().relativize(file.toURI()).getPath();
 	}
+	
 
 }

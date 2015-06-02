@@ -1,4 +1,4 @@
-package vse.klim05;
+package cz.vse._422.klim05.Klima;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,11 @@ public class ChapterManager {
 
 	private List<Chapter> chapters;
 	private JSONArray config;
-	
+
+	public List<Chapter> getChapters(){
+		return chapters;
+	}
+ 	
 	public ChapterManager(JSONArray config){
 		
 		this.config = config;
@@ -80,5 +84,7 @@ public class ChapterManager {
 		return position;
 		
 	}
+	
+
 	
 }

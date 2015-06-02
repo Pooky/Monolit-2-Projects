@@ -1,4 +1,4 @@
-package vse.klim05;
+package cz.vse._422.klim05.Klima;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ public class Chapter {
 
 	private List<String> addedFiles;
 	private List<String> excludedFiles;
+	private List<String> addedOnceFiles;
 	private Boolean  useHistory;
 	private Chapter nextChapter;
 	private Chapter	prevChapter;
@@ -24,6 +25,9 @@ public class Chapter {
 	
 	public void addFile(String path){
 		addedFiles.add(path);
+	}
+	public void addOnceFile(String path){
+		addedOnceFiles.add(path);
 	}
 	public void addExcludedFile(String path){
 		excludedFiles.add(path);
@@ -61,6 +65,7 @@ public class Chapter {
 		
 		this.addedFiles = new ArrayList<String>();
 		this.excludedFiles = new ArrayList<String>();
+		this.addedOnceFiles = new ArrayList<String>();
 		this.prevChapter = null;
 		this.nextChapter = null;
 		this.useHistory = true;
@@ -76,6 +81,14 @@ public class Chapter {
 		if(chapter.containsKey("add")){
 			for(Object file : (JSONArray) chapter.get("add")){
 				this.addFile((String) file);
+				//System.out.println(file);
+			}
+		}
+		
+		// Add files only once
+		if(chapter.containsKey("add-once")){
+			for(Object file : (JSONArray) chapter.get("add-once")){
+				this.addOnceFile((String) file);
 				//System.out.println(file);
 			}
 		}
@@ -96,11 +109,21 @@ public class Chapter {
 		
 		
 	}
+	public ArrayList<String> getFiles(){
+		
+		ArrayList<String> output = new ArrayList<String>();
+		
+		output.addAll(addedOnceFiles);
+		output.addAll(getFiles(true));
+		
+		return output;
+	}
+	
 	/**
 	 * Get all files, that this chapter contain
 	 * @return ArrayList files
 	 */
-	public ArrayList<String> getFiles(){
+	public ArrayList<String> getFiles(Boolean secondCall){
 		
 		ArrayList<String> output = new ArrayList<String>();
 		
@@ -145,6 +168,11 @@ public class Chapter {
 		}
 		
 		return output;
+	}
+	
+	
+	public String toString(){
+		return this.getName();
 	}
 	
 	
