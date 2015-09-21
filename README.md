@@ -1,6 +1,6 @@
 # Monolit-2-Projects
 
-Project generator from default monolit template, with custom syntax and specifikation of content.
+Project generator from default monolit template, with custom syntax and specification of content.
 
 # Command line options
 
